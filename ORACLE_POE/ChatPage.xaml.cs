@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,10 +18,35 @@ namespace ORACLE_POE
             public Brush SenderColor { get; set; }
         }
 
+        public class CyberTask
+        {
+            public string Title { get; set; }
+            public string Description { get; set; }
+            public DateTime? Reminder { get; set; }
+
+            public override string ToString()
+            {
+                string reminderText = Reminder.HasValue ? $"🔔 Reminder: {Reminder.Value:dd MMM yyyy}" : "No reminder set.";
+                return $"📌 {Title}\n{Description}\n{reminderText}";
+            }
+        }
+
         private string userName;
         private string currentTopic = "";
         private Random random = new Random();
         public ObservableCollection<ChatMessage> Messages { get; } = new ObservableCollection<ChatMessage>();
+        private CyberTask pendingTask = null;
+        private ObservableCollection<CyberTask> Tasks { get; } = new ObservableCollection<CyberTask>();
+
+        private Dictionary<string, string> knownTasks = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+        { "set up two-factor authentication", "Enable 2FA on critical accounts like email and banking." },
+        { "review account privacy settings", "Review account privacy settings to ensure your data is protected." },
+        { "back up important data", "Back up your documents and photos to a secure location." },
+        { "turn on spam and phishing filters", "Enable spam filters in your email to block malicious content." },
+        { "set up a vpn for safe browsing on public networks", "Install and configure a VPN to encrypt your browsing." },
+        { "run a full malware/virus scan", "Use antivirus to scan your device for threats." }
+    };
 
         public ChatPage()
         {
@@ -69,7 +95,8 @@ namespace ORACLE_POE
                                              "• Phishing scams\n" +
                                              "• Safe browsing techniques\n" +
                                              "• Recognizing suspicious links\n" +
-                                             "• General cybersecurity awareness\n\n" +
+                                             "• General cybersecurity awareness\n" +
+                                             "• I can help you add cyberelated tasks - just ask 'Add task'\n\n" +
                                              "I'm here to assist you with anything cybersecurity related.";
 
                     AddMessage("Oracle", welcomeMessage, Brushes.Cyan);
@@ -93,57 +120,160 @@ namespace ORACLE_POE
 
         private void ProcessChatInput(string userInput)
         {
-            // Check for exit commands
-            if (userInput == "exit" ||
-                userInput == "quit" ||
-                userInput == "goodbye" ||
-                userInput == "bye" ||
-                userInput == "i'm done" ||
-                userInput == "leave" ||
-                userInput == "end chat")
+            // Check for exit
+            if (userInput == "exit" || userInput == "quit" || userInput == "bye" || userInput == "end chat")
             {
-                List<string> farewellMessages = new List<string>
-                {
-                    $"Bye Bye {userName}! I'll always be here for you.",
-                    $"Goodbye {userName}, stay safe online!",
-                    $"See you next time, {userName}! Keep practicing cybersecurity.",
-                    $"Farewell, {userName}! I hope you learned something new.",
-                    $"Until next time, {userName}! Stay cyber-aware."
-                };
-
-                int index = random.Next(farewellMessages.Count);
-                AddMessage("Oracle", farewellMessages[index], Brushes.Cyan);
-
-                // Optionally close the window or disable input
+                var farewells = new List<string>
+            {
+            $"Bye Bye {userName}! I'll always be here for you.",
+            $"Goodbye {userName}, stay safe online!",
+            $"See you next time, {userName}! Keep practicing cybersecurity.",
+            $"Farewell, {userName}! I hope you learned something new.",
+            $"Until next time, {userName}! Stay cyber-aware."
+            };
+                AddMessage("Oracle", farewells[random.Next(farewells.Count)], Brushes.Cyan);
                 UserInputTextBox.IsEnabled = false;
                 return;
             }
-            // Check for greetings/how are you
-            else if (userInput.Contains("how are you") ||
-                     userInput.Contains("how's it going") ||
-                     userInput.Contains("how do you feel") ||
-                     userInput.Contains("are you okay") ||
-                     userInput.Contains("what's up"))
-            {
-                List<string> responses = new List<string>
-                {
-                    $"I feel great, {userName}! Thanks for asking.",
-                    $"I'm running smoothly, {userName}! No cyber threats in sight.",
-                    $"Cybersecurity keeps me energized, {userName}!",
-                    $"I'm doing well! Always excited to talk about online safety."
-                };
 
-                int index = random.Next(responses.Count);
-                AddMessage("Oracle", responses[index], Brushes.Cyan);
-                AddMessage("Oracle", "Anything you need help with cybersecurity related?", Brushes.Cyan);
-            }
-            else
+            // Greetings
+            if (userInput.Contains("how are you") || userInput.Contains("how's it going"))
             {
-                // Process other cybersecurity topics
-                string response = GetChatbotResponse(userInput);
-                AddMessage("Oracle", response, Brushes.Cyan);
+                var responses = new List<string>
+            {
+            $"I feel great, {userName}! Thanks for asking.",
+            $"I'm running smoothly, {userName}! No cyber threats in sight.",
+            $"Cybersecurity keeps me energized, {userName}!",
+            $"I'm doing well! Always excited to talk about online safety."
+            };
+
+                AddMessage("Oracle", responses[random.Next(responses.Count)], Brushes.Cyan);
+                AddMessage("Oracle", "Anything you need help with cybersecurity related?", Brushes.Cyan);
+                return;
             }
-        }
+
+            // Task reminder: "4 days" or "2025-06-20"
+            if (pendingTask != null)
+            {
+                if (userInput.StartsWith("no"))
+                {
+                    Tasks.Add(pendingTask);
+                    AddMessage("Oracle", $"Okay, task added with no reminder.\n \"{pendingTask.Title}\" is now saved.", Brushes.Cyan);
+                    pendingTask = null;
+                    return;
+                }            
+
+
+                    if (int.TryParse(userInput.Split(' ')[0], out int reminderDays))
+                    {
+                        pendingTask.Reminder = DateTime.Today.AddDays(reminderDays);
+                        Tasks.Add(pendingTask);
+                        AddMessage("Oracle", $"Okay, I'll remind you in {reminderDays} day{(reminderDays == 1 ? "" : "s")}.", Brushes.Cyan);
+                        pendingTask = null;
+                        return;
+                    }
+
+                    if (DateTime.TryParse(userInput, out DateTime reminderDate))
+                    {
+                        pendingTask.Reminder = reminderDate;
+                        Tasks.Add(pendingTask);
+                        AddMessage("Oracle", $"Reminder set for {reminderDate:dd MMM yyyy}. Task saved.", Brushes.Cyan);
+                        pendingTask = null;
+                        return;
+                    }
+
+                    AddMessage("Oracle", "Sorry, I couldn't understand the reminder. Try typing a number of days like '4' or a date like '2025-06-20'.", Brushes.Cyan);
+                    return;
+                }
+
+                // Choose task by number
+                if (currentTopic == "choose-task" && int.TryParse(userInput, out int chosen) && chosen >= 1 && chosen <= knownTasks.Count)
+                {
+                    var task = knownTasks.ElementAt(chosen - 1);
+                    if (Tasks.Any(t => t.Title.Equals(task.Key, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        AddMessage("Oracle", "You’ve already added that task.", Brushes.Cyan);
+                    }
+                    else
+                    {
+                        pendingTask = new CyberTask { Title = task.Key, Description = task.Value };
+                        AddMessage("Oracle", $"Task added with description \"{task.Value}\"\nWould you like a reminder?", Brushes.Cyan);
+                    }
+                    currentTopic = "";
+                    return;
+                }
+
+                // Start guided task selection
+                if (userInput.Contains("add task"))
+                {
+                    int index = 1;
+                    StringBuilder builder = new StringBuilder("Here are tasks I can help you add:\n\n");
+                    foreach (var task in knownTasks.Keys)
+                    {
+                        builder.AppendLine($"{index}. {task}");
+                        index++;
+                    }
+                    builder.AppendLine("\nType the task number to add it.");
+                    AddMessage("Oracle", builder.ToString(), Brushes.Cyan);
+                    currentTopic = "choose-task";
+                    return;
+                }
+
+                // Show all tasks
+                if (userInput.Contains("show task") || userInput.Contains("my task"))
+                {
+                    if (Tasks.Count == 0)
+                    {
+                        AddMessage("Oracle", "You haven’t added any tasks yet.", Brushes.Cyan);
+                    }
+                    else
+                    {
+                        foreach (var task in Tasks)
+                            AddMessage("Oracle", task.ToString(), Brushes.Cyan);
+                    }
+                    return;
+                }
+
+                // Delete or complete tasks
+                if (userInput.Contains("delete task") || userInput.Contains("complete task"))
+                {
+                    if (Tasks.Count == 0)
+                    {
+                        AddMessage("Oracle", "No tasks to update right now.", Brushes.Cyan);
+                        return;
+                    }
+
+                    string action = userInput.Contains("delete") ? "delete" : "complete";
+                    StringBuilder taskList = new StringBuilder($"Which task would you like to {action}?\n");
+                    for (int i = 0; i < Tasks.Count; i++)
+                        taskList.AppendLine($"{i + 1}. {Tasks[i].Title}");
+
+                    AddMessage("Oracle", taskList.ToString(), Brushes.Cyan);
+                    currentTopic = action;
+                    return;
+                }
+
+                if ((currentTopic == "delete" || currentTopic == "complete") && int.TryParse(userInput, out int taskIndex))
+                {
+                    if (taskIndex >= 1 && taskIndex <= Tasks.Count)
+                    {
+                        var selected = Tasks[taskIndex - 1];
+                        Tasks.Remove(selected);
+                        AddMessage("Oracle", $"Task \"{selected.Title}\" has been {(currentTopic == "delete" ? "deleted " : "marked as complete ")}.", Brushes.Cyan);
+                    }
+                    else
+                    {
+                        AddMessage("Oracle", "That number doesn’t match any task.", Brushes.Cyan);
+                    }
+                    currentTopic = "";
+                    return;
+                }
+
+                // Fallback chatbot responses
+                string fallback = GetChatbotResponse(userInput);
+                AddMessage("Oracle", fallback, Brushes.Cyan);
+            }
+        
 
         private string GetChatbotResponse(string input)
         {

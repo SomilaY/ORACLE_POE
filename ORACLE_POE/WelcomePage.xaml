@@ -47,15 +47,25 @@
                        TextAlignment="Center"
                        Width="451"/>
 
-            <!-- Start Button -->
-            <Button x:Name="StartButton" Content="Start Chat" 
-                    Margin="0,30,0,0" 
-                    Width="120" Height="30"
-                    HorizontalAlignment="Center"
-                    Background="#FF00C8FF"
-                    Foreground="Black"
-                    FontWeight="Bold"
-                    Click="StartButton_Click"/>
+            <!-- Buttons Container -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
+                <!-- Start Chat Button -->
+                <Button x:Name="StartButton" Content="Start Chat" 
+                        Margin="0,0,10,0" 
+                        Width="120" Height="30"
+                        Background="#FF00C8FF"
+                        Foreground="Black"
+                        FontWeight="Bold"
+                        Click="StartButton_Click"/>
+
+                <!-- Cybersecurity Quiz Button -->
+                <Button x:Name="QuizButton" Content="Cybersecurity Quiz" 
+                        Width="120" Height="30"
+                        Background="#FF00C8FF"
+                        Foreground="Black"
+                        FontWeight="Bold"
+                        Click="QuizButton_Click"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

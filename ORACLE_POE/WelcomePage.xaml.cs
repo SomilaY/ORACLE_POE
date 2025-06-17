@@ -48,5 +48,11 @@ namespace ORACLE_POE
             ChatPage chatPage = new ChatPage();
             this.NavigationService.Navigate(chatPage);
         }
+
+        private void QuizButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Navigate to the quiz page
+            NavigationService?.Navigate(new QuizPage());
+        }
     }
 }
