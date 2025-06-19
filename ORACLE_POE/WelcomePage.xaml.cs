@@ -51,8 +51,8 @@ namespace ORACLE_POE
 
         private void QuizButton_Click(object sender, RoutedEventArgs e)
         {
-            // Navigate to the quiz page
-            NavigationService?.Navigate(new QuizPage());
+            CyberQuiz cyberQuiz = new CyberQuiz();
+            this.NavigationService.Navigate(cyberQuiz);
         }
     }
 }

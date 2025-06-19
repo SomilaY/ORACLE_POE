@@ -151,6 +151,20 @@ namespace ORACLE_POE
                 AddMessage("Oracle", "Anything you need help with cybersecurity related?", Brushes.Cyan);
                 return;
             }
+          
+            // Check for quiz command
+            if (userInput.Contains("quiz") || userInput.Contains("test") || userInput.Contains("cybersecurity quiz"))
+            {
+                AddMessage("Oracle", $"Great idea {userName}! Let's test your cybersecurity knowledge. I'll take you to the quiz now.", Brushes.Cyan);
+
+                // Small delay to let user read the message before navigating
+                Task.Delay(1000).ContinueWith(t =>
+                {
+                    Dispatcher.Invoke(() => NavigationService?.Navigate(new CyberQuiz()));
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+
+                return;
+            }
 
             // Task reminder: "4 days" or "2025-06-20"
             if (pendingTask != null)
