@@ -231,7 +231,7 @@ namespace ORACLE_POE
             FeedbackBorder.Visibility = Visibility.Visible;
             FeedbackText.Text = GetResultFeedback(score, questions.Count);
             FeedbackText.Foreground = Brushes.White;
-            ExplanationText.Text = "Thank you for testing your cybersecurity knowledge!";
+            ExplanationText.Text = "Its always good to test yourself!";
         }
 
         private string GetResultFeedback(int score, int totalQuestions)
@@ -240,7 +240,7 @@ namespace ORACLE_POE
 
             if (percentage >= 90) return "Excellent! You're a cybersecurity expert!";
             if (percentage >= 75) return "Great job! You have strong cybersecurity knowledge.";
-            if (percentage >= 50) return "Good effort! Consider reviewing cybersecurity basics.";
+            if (percentage >= 50) return "Not quite there! I'm happy to teach you about the basics";
             return "Keep learning! Cybersecurity is important for everyone.";
         }
 
@@ -252,6 +252,13 @@ namespace ORACLE_POE
             NextButton.Click += NextButton_Click;
             NextButton.Content = "Next Question";
             ShowQuestion();
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+           
+            NavigationService?.GoBack();
+           
         }
     }
 

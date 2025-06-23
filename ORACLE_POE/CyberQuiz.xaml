@@ -14,13 +14,36 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
+        <!-- Header with Back Button -->
         <Border Grid.Row="0" Background="#FF0A121A" Padding="10">
-            <TextBlock Text="Cybersecurity Quiz" 
-                       Foreground="#FF00C8FF" 
-                       FontSize="20"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Back Button -->
+                <Button x:Name="BackButton"
+                        Grid.Column="0"
+                        Content="← Back"
+                        Width="80"
+                        Margin="0,0,10,0"
+                        Background="Transparent"
+                        Foreground="#FF00C8FF"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Click="BackButton_Click"
+                        HorizontalAlignment="Left"/>
+
+                <!-- Quiz Title -->
+                <TextBlock Grid.Column="1"
+                           Text="Cybersecurity Quiz" 
+                           Foreground="#FF00C8FF" 
+                           FontSize="20"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Grid>
         </Border>
 
         <!-- Quiz Content Area -->

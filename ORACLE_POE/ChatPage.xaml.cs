@@ -37,6 +37,8 @@ namespace ORACLE_POE
         public ObservableCollection<ChatMessage> Messages { get; } = new ObservableCollection<ChatMessage>();
         private CyberTask pendingTask = null;
         private ObservableCollection<CyberTask> Tasks { get; } = new ObservableCollection<CyberTask>();
+        private List<string> _actionLog = new List<string>();
+        private const int MaxLogEntries = 10;
 
         private Dictionary<string, string> knownTasks = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -97,6 +99,7 @@ namespace ORACLE_POE
                                              "• Recognizing suspicious links\n" +
                                              "• General cybersecurity awareness\n" +
                                              "• I can help you add cyberelated tasks - just ask 'Add task'\n\n" +
+                                             "• Activity log ('show log' to view)\n\n" +
                                              "I'm here to assist you with anything cybersecurity related.";
 
                     AddMessage("Oracle", welcomeMessage, Brushes.Cyan);
@@ -155,12 +158,13 @@ namespace ORACLE_POE
             // Check for quiz command
             if (userInput.Contains("quiz") || userInput.Contains("test") || userInput.Contains("cybersecurity quiz"))
             {
+                LogAction("Started cybersecurity quiz");
                 AddMessage("Oracle", $"Great idea {userName}! Let's test your cybersecurity knowledge. I'll take you to the quiz now.", Brushes.Cyan);
 
                 // Small delay to let user read the message before navigating
                 Task.Delay(1000).ContinueWith(t =>
                 {
-                    Dispatcher.Invoke(() => NavigationService?.Navigate(new CyberQuiz()));
+                    Dispatcher.Invoke(() => NavigationService.Navigate(new CyberQuiz(), this));
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
                 return;
@@ -181,7 +185,8 @@ namespace ORACLE_POE
                     if (int.TryParse(userInput.Split(' ')[0], out int reminderDays))
                     {
                         pendingTask.Reminder = DateTime.Today.AddDays(reminderDays);
-                        Tasks.Add(pendingTask);
+                    LogAction($"Set reminder for task: {pendingTask.Title} ({reminderDays} days)");
+                    Tasks.Add(pendingTask);
                         AddMessage("Oracle", $"Okay, I'll remind you in {reminderDays} day{(reminderDays == 1 ? "" : "s")}.", Brushes.Cyan);
                         pendingTask = null;
                         return;
@@ -211,7 +216,8 @@ namespace ORACLE_POE
                     else
                     {
                         pendingTask = new CyberTask { Title = task.Key, Description = task.Value };
-                        AddMessage("Oracle", $"Task added with description \"{task.Value}\"\nWould you like a reminder?", Brushes.Cyan);
+                    LogAction($"Added task: {task.Key}");
+                    AddMessage("Oracle", $"Task added with description \"{task.Value}\"\nWould you like a reminder?", Brushes.Cyan);
                     }
                     currentTopic = "";
                     return;
@@ -272,7 +278,8 @@ namespace ORACLE_POE
                     if (taskIndex >= 1 && taskIndex <= Tasks.Count)
                     {
                         var selected = Tasks[taskIndex - 1];
-                        Tasks.Remove(selected);
+                    LogAction($"{currentTopic}d task: {selected.Title}");
+                    Tasks.Remove(selected);
                         AddMessage("Oracle", $"Task \"{selected.Title}\" has been {(currentTopic == "delete" ? "deleted " : "marked as complete ")}.", Brushes.Cyan);
                     }
                     else
@@ -283,8 +290,26 @@ namespace ORACLE_POE
                     return;
                 }
 
-                // Fallback chatbot responses
-                string fallback = GetChatbotResponse(userInput);
+            if (userInput.Contains("show log") || userInput.Contains("activity log"))
+            {
+                if (_actionLog.Count == 0)
+                {
+                    AddMessage("Oracle", "No activities logged yet.", Brushes.Cyan);
+                }
+                else
+                {
+                    var logMessage = new StringBuilder("Recent activities:\n\n");
+                    foreach (var entry in _actionLog)
+                    {
+                        logMessage.AppendLine($"• {entry}");
+                    }
+                    AddMessage("Oracle", logMessage.ToString(), Brushes.Cyan);
+                }
+                return;
+            }
+
+            // Fallback chatbot responses
+            string fallback = GetChatbotResponse(userInput);
                 AddMessage("Oracle", fallback, Brushes.Cyan);
             }
         
@@ -309,6 +334,18 @@ namespace ORACLE_POE
             // Add more response logic as needed
 
             return "I'm not sure I understand. Could you rephrase your question about cybersecurity?";
+        }
+
+        private void LogAction(string action)
+        {
+            string timestamp = DateTime.Now.ToString("HH:mm:ss");
+            _actionLog.Insert(0, $"[{timestamp}] {action}"); // Add newest entries at the top
+
+            // Keep only the last 10 entries
+            if (_actionLog.Count > MaxLogEntries)
+            {
+                _actionLog.RemoveAt(MaxLogEntries);
+            }
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
