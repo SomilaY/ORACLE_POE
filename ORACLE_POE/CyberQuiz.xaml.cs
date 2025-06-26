@@ -22,7 +22,7 @@ namespace ORACLE_POE
 
         private void InitializeQuestions()
         {
-            questions = new List<QuizQuestion>
+            questions = new List<QuizQuestion> //list to store questios
             {
                 new QuizQuestion(
                     "What is the minimum recommended length for a strong password?",
@@ -147,7 +147,7 @@ namespace ORACLE_POE
             };
         }
 
-        private void ShowQuestion()
+        private void ShowQuestion() //current quiz question and its answer options
         {
             if (currentQuestionIndex >= questions.Count)
             {
@@ -179,7 +179,7 @@ namespace ORACLE_POE
             answerSelected = false;
         }
 
-        private void Option_Checked(object sender, RoutedEventArgs e)
+        private void Option_Checked(object sender, RoutedEventArgs e) //checks if the answers correct and gives feedback
         {
             if (answerSelected) return;
 
@@ -206,7 +206,7 @@ namespace ORACLE_POE
             answerSelected = true;
         }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
+        private void NextButton_Click(object sender, RoutedEventArgs e) //loops through the questions until they are finished 
         {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.Count)
@@ -219,7 +219,7 @@ namespace ORACLE_POE
             }
         }
 
-        private void ShowResults()
+        private void ShowResults() //when the quiz is over, chance to restart and gives feedback
         {
             OptionsPanel.Children.Clear();
             QuestionText.Text = "Quiz Complete!";
@@ -234,7 +234,7 @@ namespace ORACLE_POE
             ExplanationText.Text = "Its always good to test yourself!";
         }
 
-        private string GetResultFeedback(int score, int totalQuestions)
+        private string GetResultFeedback(int score, int totalQuestions) //feedback based on percentage
         {
             double percentage = (double)score / totalQuestions * 100;
 
@@ -244,7 +244,7 @@ namespace ORACLE_POE
             return "Keep learning! Cybersecurity is important for everyone.";
         }
 
-        private void RestartQuiz_Click(object sender, RoutedEventArgs e)
+        private void RestartQuiz_Click(object sender, RoutedEventArgs e) // restart the quiz
         {
             currentQuestionIndex = 0;
             score = 0;
@@ -262,7 +262,7 @@ namespace ORACLE_POE
         }
     }
 
-    public class QuizQuestion
+    public class QuizQuestion //blueprint for the questions 
     {
         public string QuestionText { get; }
         public List<string> Options { get; }

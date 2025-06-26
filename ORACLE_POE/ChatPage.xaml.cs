@@ -96,7 +96,7 @@ namespace ORACLE_POE
                                              "• Safe browsing techniques\n" +
                                              "• Recognizing suspicious links\n" +
                                              "• General cybersecurity awareness\n" +
-                                             "• I can help you add cyberelated tasks - just ask 'Add task'\n" +
+                                             "• I can help you add cyberelated tasks - just ask 'Add task', 'delete task' or 'complete task'\n" +
                                              "• Activity log ('show log' to view)\n\n" +
                                              "I'm here to assist you with anything cybersecurity related.";
 
@@ -217,7 +217,7 @@ namespace ORACLE_POE
 
                 passwordResponse.AppendLine("PASSWORD SECURITY ESSENTIALS:\n");
 
-                // Add random password tips
+                // Add randomized password tips
                 List<string> passwordTips = new List<string>
                 {
                  "• Make your password at least 12-16 characters long for stronger security.",
@@ -258,7 +258,7 @@ namespace ORACLE_POE
                     phishingResponse.AppendLine("Phishing scams can be stressful, but don't worry! I'll guide you through it so you can stay safe and secure. You've got this!\n");
                 }
 
-                // Add random phishing introduction
+                // Add randomized phishing introduction
                 List<string> phishingResponses = new List<string>
                 {
                  $"I can't stand phishing scams, {userName}! They're like digital pickpockets, sneaking into your inbox.",
@@ -272,7 +272,7 @@ namespace ORACLE_POE
                 phishingResponse.AppendLine($"But don't worry, {userName}, I'll help you spot the red flags so they don't get you!\n");
                 phishingResponse.AppendLine("SPOTTING A PHISHING SCAM:\n");
 
-                // Add random phishing red flags
+                // Add randomized phishing red flags
                 List<string> phishingRedFlags = new List<string>
                 {
                  $"• Emails starting with \"Dear Customer\" instead of \"Dear {userName}\"",
@@ -290,7 +290,7 @@ namespace ORACLE_POE
 
                 phishingResponse.AppendLine("\nHOW TO STAY PROTECTED:\n");
 
-                // Add random prevention tips
+                // Add randomized prevention tips
                 List<string> phishingPreventionTips = new List<string>
                 {
                  "• Add an extra layer of security like Two-Factor Authentication (2FA)",
@@ -327,7 +327,7 @@ namespace ORACLE_POE
                     safeBrowsingResponse.AppendLine("I totally understand how scary this all can be, but don't worry—I'm here to help.\n");
                 }
 
-                // Add random safe browsing introduction
+                // Add randomized safe browsing introduction
                 List<string> safeBrowsingResponses = new List<string>
                 {
                  $"Safe browsing is all about protecting yourself while exploring the vast web, {userName}.",
@@ -340,7 +340,7 @@ namespace ORACLE_POE
                 safeBrowsingResponse.AppendLine(safeBrowsingResponses[random.Next(safeBrowsingResponses.Count)]);
                 safeBrowsingResponse.AppendLine("\nHOW TO BROWSE SAFELY:\n");
 
-                // Add random safe browsing tips
+                // Add randomized safe browsing tips
                 List<string> safeBrowsingTips = new List<string>
                 {
                  "• Always check for HTTPS in the address bar—this means the site is secure.",
@@ -380,7 +380,7 @@ namespace ORACLE_POE
                     suspiciousLinksResponse.AppendLine($"Criminals are a scary threat on the internet, but don't worry {userName}, I've got you.\n");
                 }
 
-                // Add random suspicious links introduction
+                // Add randomized suspicious links introduction
                 List<string> suspiciousLinkResponses = new List<string>
                 {
                  $"Great! I love this topic, {userName}. Recognizing shady links is key to avoiding scams online.",
@@ -392,7 +392,7 @@ namespace ORACLE_POE
                 suspiciousLinksResponse.AppendLine(suspiciousLinkResponses[random.Next(suspiciousLinkResponses.Count)]);
                 suspiciousLinksResponse.AppendLine("\nHOW TO SPOT SUSPICIOUS LINKS:\n");
 
-                // Add random suspicious link red flags
+                // Add randomized suspicious link red flags
                 List<string> suspiciousLinkRedFlags = new List<string>
                 {
                  "• Check for misspellings – Scammers use fake domains like \"Go0gle.com\" instead of \"Google.com\".",
@@ -412,7 +412,7 @@ namespace ORACLE_POE
 
                 suspiciousLinksResponse.AppendLine($"\nHere's how to protect yourself, {userName}:\n");
 
-                // Add random prevention tips
+                // Add randomized prevention tips
                 List<string> suspiciousLinkPreventionTips = new List<string>
                 {
                  "• Enable Two-Factor Authentication (2FA) for extra protection.",
@@ -453,7 +453,7 @@ namespace ORACLE_POE
             // Task reminder: "4 days" or "2025-06-20"
             if (pendingTask != null)
             {
-                if (userInput.StartsWith("no"))
+                if (userInput.StartsWith("no")) //when the user says no
                 {
                     Tasks.Add(pendingTask);
                     AddMessage("Oracle", $"Okay, task added with no reminder.\n \"{pendingTask.Title}\" is now saved.", Brushes.Cyan);
@@ -462,7 +462,7 @@ namespace ORACLE_POE
                 }            
 
 
-                    if (int.TryParse(userInput.Split(' ')[0], out int reminderDays))
+                    if (int.TryParse(userInput.Split(' ')[0], out int reminderDays)) //check for number
                     {
                         pendingTask.Reminder = DateTime.Today.AddDays(reminderDays);
                         LogAction($"Set reminder for task: {pendingTask.Title} ({reminderDays} days)");
@@ -570,7 +570,7 @@ namespace ORACLE_POE
                     return;
                 }
 
-            if (userInput.Contains("show log") || userInput.Contains("activity log"))
+            if (userInput.Contains("show log") || userInput.Contains("activity log")) //shows the users recent activity
             {
                 if (_actionLog.Count == 0)
                 {
@@ -620,31 +620,31 @@ namespace ORACLE_POE
             else if (userInput == "password tip")
             {
                 List<string> passwordTips = new List<string>
-    {
-        "✅ Use a **passphrase** instead of a short password—it's easier to remember and harder to crack.",
-        "✅ **Never reuse passwords** across different accounts.",
-        "✅ **Enable multi-factor authentication (MFA)** whenever possible."
-    };
+                {
+                 "Use a passphrase** instead of a short password—it's easier to remember and harder to crack.",
+                 "Never reuse passwords across different accounts.",
+                 "Enable multi-factor authentication (MFA) whenever possible."
+                };
                 AddMessage("Oracle", passwordTips[random.Next(passwordTips.Count)], Brushes.Cyan);
             }
             else if (userInput.Contains("phishing tip"))
             {
                 List<string> phishingTips = new List<string>
-    {
-        "🔎 Always verify sender email addresses—scammers often use subtle misspellings.",
-        "🚫 Never click links in unsolicited emails—instead, go directly to the official website.",
-        "⚠️ Beware of urgent messages—scammers create fake emergencies to trick you into reacting."
-    };
+                {
+                 "Always verify sender email addresses—scammers often use subtle misspellings.",
+                 "Never click links in unsolicited emails—instead, go directly to the official website.",
+                 "Beware of urgent messages—scammers create fake emergencies to trick you into reacting."
+                 };
                 AddMessage("Oracle", phishingTips[random.Next(phishingTips.Count)], Brushes.Cyan);
             }
             else if (userInput.Contains("safe browsing tip"))
             {
                 List<string> safeBrowsingTips = new List<string>
-    {
-        "🔒 Always check for HTTPS and the lock icon before entering sensitive data.",
-        "🚫 Never enter credentials on sites from unknown emails—they could be phishing scams.",
-        "👀 Hover over links before clicking to ensure they lead to legitimate destinations."
-    };
+                {
+                 "Always check for HTTPS and the lock icon before entering sensitive data.",
+                 "Never enter credentials on sites from unknown emails—they could be phishing scams.",
+                 "Hover over links before clicking to ensure they lead to legitimate destinations."
+                };
                 AddMessage("Oracle", safeBrowsingTips[random.Next(safeBrowsingTips.Count)], Brushes.Cyan);
             }
             // 4. Specific topic follow-up questions
@@ -668,7 +668,7 @@ namespace ORACLE_POE
             }
             else if (currentTopic == "password")
             {
-                if (userInput.Contains("manager") || userInput.Contains("store pass"))
+                if (userInput.Contains("password-manager") || userInput.Contains("store pass"))
                 {
                     AddMessage("Oracle", "A password manager helps you securely store all your passwords in one place. Would you like to know how to choose the best one?", Brushes.Cyan);
                 }
@@ -689,13 +689,13 @@ namespace ORACLE_POE
             else
             {
                 List<string> unknownResponses = new List<string>
-        {
-            $"Hmm, {userName}, I'm not sure I understand. Could you rephrase?",
-            $"Umm, I'm a bit lost here, {userName}. Mind explaining in a different way?",
-            $"I don't quite get what you mean, {userName}. Try asking another way!",
-            $"Oops! That one puzzled me, {userName}. Could you clarify?",
-            $"I'm not sure what you meant by '{userInput}', {userName}. Can you reword it?"
-        };
+                {
+                 $"Hmm, {userName}, I'm not sure I understand. Could you rephrase?",
+                 $"Umm, I'm a bit lost here, {userName}. Mind explaining in a different way?",
+                 $"I don't quite get what you mean, {userName}. Try asking another way!",
+                 $"Oops! That one puzzled me, {userName}. Could you clarify?",
+                 $"I'm not sure what you meant by '{userInput}', {userName}. Can you reword it?"
+                };
                 AddMessage("Oracle", unknownResponses[random.Next(unknownResponses.Count)], Brushes.Cyan);
             }
 
@@ -724,7 +724,7 @@ namespace ORACLE_POE
             return "I'm not sure I understand. Could you rephrase your question about cybersecurity?";
         }
 
-        private void LogAction(string action)
+        private void LogAction(string action) //keep track of users actions
         {
             string timestamp = DateTime.Now.ToString("HH:mm:ss");
             _actionLog.Insert(0, $"[{timestamp}] {action}"); // Add newest entries at the top
@@ -736,14 +736,14 @@ namespace ORACLE_POE
             }
         }
 
-        private void SendButton_Click(object sender, RoutedEventArgs e)
+        private void SendButton_Click(object sender, RoutedEventArgs e) //processes userinput
         {
             string input = UserInputTextBox.Text;
-            UserInputTextBox.Clear();
+            UserInputTextBox.Clear(); //clears the textbox
             ProcessUserInput(input);
         }
 
-        private void UserInputTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void UserInputTextBox_KeyDown(object sender, KeyEventArgs e) //processes user input when user presses enter
         {
             if (e.Key == Key.Enter)
             {
